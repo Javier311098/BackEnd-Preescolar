@@ -13,6 +13,8 @@ app.use(express.json());
 
 //Rutas
 app.use("/api/usuario", require("./routes/usuarios"));
+app.use("/api/materias", require("./routes/materias"));
+app.use("/api/grados", require("./routes/grados"));
 app.use("/api/preguntas", require("./routes/preguntas"));
 
 const server = app.listen(process.env.PORT, () => {
