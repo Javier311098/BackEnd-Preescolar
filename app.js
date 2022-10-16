@@ -12,8 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 //Rutas
-app.use("/api/usuario", require("./routes/usuarios"));
+app.use("/api/administrador", require("./routes/administradores"));
 app.use("/api/materias", require("./routes/materias"));
+app.use("/api/actividades", require("./routes/actividades"));
 app.use("/api/grados", require("./routes/grados"));
 app.use("/api/preguntas", require("./routes/preguntas"));
 

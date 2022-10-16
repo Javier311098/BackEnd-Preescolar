@@ -1,40 +1,43 @@
 const { Sequelize } = require("sequelize");
 const db = require("../database/config");
-const Role = require("./Role");
 
-const Usuario = db.define(
-  "usuarios",
+const Administrador = db.define(
+  "administradores",
   {
-    id: {
+    id_admin: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    nombre_admin: {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    password: {
+    telefono_admin: {
       type: Sequelize.TEXT,
       allowNull: false,
     },
-    email: {
+    correo_admin: {
       type: Sequelize.TEXT,
       allowNull: false,
+      validate: {
+        max: 100,
+      },
     },
-    role_id: {
-      type: Sequelize.INTEGER,
+    password_admin: {
+      type: Sequelize.TEXT,
       allowNull: false,
+      validate: {
+        max: 255,
+      },
     },
   },
   {
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
+    createdAt: "fecha_creacion",
+    updatedAt: "fecha_actualizacion",
   }
 );
 
-// Associations
-Role.hasMany(Usuario, { foreignKey: "role_id", sourceKey: "id" });
-Usuario.belongsTo(Role, { foreignKey: "role_id", sourceKey: "id" });
-
-module.exports = Usuario;
+module.exports = Administrador;
