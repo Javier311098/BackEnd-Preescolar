@@ -10,12 +10,14 @@ const {
   darDeBajaGrado,
   eliminarGrado,
 } = require("../controllers/gradosController");
+const { validarJWT } = require("../middlewares/validar-jwt");
 
 const validarGrado = [
   check("nombre_grado", "El grado debe tener un nombre").not().isEmpty(),
   validarCampos,
 ];
 
+router.use(validarJWT);
 router.post("/", validarGrado, crearGrado);
 router.get("/", obtenerGrados);
 router.get("/:nombre", obtenerGradoPorNombre);

@@ -1,34 +1,29 @@
 const { Sequelize } = require("sequelize");
 const db = require("../database/config");
+const Clase = require("./Clase");
 
-const Administrador = db.define(
-  "administradores",
+const Asistencia = db.define(
+  "asistencias",
   {
-    id_admin: {
+    id_asistencia: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    nombre_admin: {
-      type: Sequelize.TEXT,
+    id_clase: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
-    telefono_admin: {
-      type: Sequelize.TEXT,
+    asistencia: {
+      type: Sequelize.INTEGER,
       allowNull: false,
     },
-    correo_admin: {
-      type: Sequelize.TEXT,
+    estatus: {
+      type: Sequelize.INTEGER,
       allowNull: false,
+      defaultValue: 1,
       validate: {
-        max: 100,
-      },
-    },
-    password_admin: {
-      type: Sequelize.TEXT,
-      allowNull: false,
-      validate: {
-        max: 255,
+        max: 1,
       },
     },
   },
@@ -40,4 +35,8 @@ const Administrador = db.define(
   }
 );
 
-module.exports = Administrador;
+// 1:1
+Asistencia.belongsTo(Clase, { foreignKey: "id_clase" });
+Clase.hasOne(Asistencia, { foreignKey: "id_clase" });
+
+module.exports = Asistencia;

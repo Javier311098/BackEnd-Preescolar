@@ -31,11 +31,7 @@ const crearGrado = async (req, resp = response) => {
 };
 
 const obtenerGrados = async (req, res = response) => {
-  let grados = await Grado.findAll({
-    where: {
-      estatus: 1,
-    },
-  });
+  let grados = await Grado.findAll();
   res.json({
     ok: true,
     grados,
@@ -87,12 +83,12 @@ const darDeBajaGrado = async (req, resp = response) => {
   try {
     const grado = await Grado.findByPk(gradoId);
     if (!grado) {
-      return resp.status(404).json({ ok: false, msg: "La grado no existe" });
+      return resp.status(404).json({ ok: false, msg: "El grado no existe" });
     }
     if (grado.estatus === 0) {
       return resp
         .status(404)
-        .json({ ok: false, msg: "La grado ya se dio de baja anteriormente" });
+        .json({ ok: false, msg: "El grado ya se dio de baja anteriormente" });
     }
     const gradoDeBaja = await Grado.update(
       { ...req.body, estatus: 0 },
