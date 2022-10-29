@@ -56,6 +56,7 @@ const Actividad = db.define(
     estatus: {
       type: Sequelize.INTEGER,
       allowNull: false,
+      defaultValue: 1,
       validate: {
         max: 1,
       },

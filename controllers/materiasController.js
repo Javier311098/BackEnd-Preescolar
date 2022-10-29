@@ -33,11 +33,7 @@ const crearMateria = async (req, resp = response) => {
 };
 
 const obtenerMaterias = async (req, res = response) => {
-  let materias = await Materia.findAll({
-    where: {
-      estatus: 1,
-    },
-  });
+  let materias = await Materia.findAll();
   res.json({
     ok: true,
     materias,

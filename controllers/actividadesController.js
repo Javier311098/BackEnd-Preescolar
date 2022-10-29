@@ -31,11 +31,7 @@ const crearActividad = async (req, resp = response) => {
 };
 
 const obtenerActividades = async (req, res = response) => {
-  let actividades = await Actividad.findAll({
-    where: {
-      estatus: 1,
-    },
-  });
+  let actividades = await Actividad.findAll();
   res.json({
     ok: true,
     actividades,

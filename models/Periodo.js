@@ -1,24 +1,32 @@
 const { Sequelize } = require("sequelize");
 const db = require("../database/config");
 
-const Role = db.define(
-  "roles",
+const Periodo = db.define(
+  "periodos",
   {
-    id_rol: {
+    id_periodo: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    rol: {
+    nombre_periodo: {
       type: Sequelize.TEXT,
       allowNull: false,
       validate: {
-        max: 10,
+        max: 100,
       },
+    },
+    inicio_periodo: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    fin_periodo: {
+      type: Sequelize.DATE,
+      allowNull: true,
     },
     estatus: {
       type: Sequelize.INTEGER,
-      allowNull: true,
+      allowNull: false,
       defaultValue: 1,
       validate: {
         max: 1,
@@ -33,4 +41,4 @@ const Role = db.define(
   }
 );
 
-module.exports = Role;
+module.exports = Periodo;
