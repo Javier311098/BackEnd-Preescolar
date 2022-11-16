@@ -17,7 +17,7 @@ const validarGrado = [
   validarCampos,
 ];
 
-router.use(validarJWT);
+// router.use(validarJWT);
 router.post("/", validarGrado, crearGrado);
 router.get("/", obtenerGrados);
 router.get("/:nombre", obtenerGradoPorNombre);

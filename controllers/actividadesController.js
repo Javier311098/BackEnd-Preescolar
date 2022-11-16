@@ -1,10 +1,12 @@
 const { response } = require("express");
 const { Op } = require("sequelize");
+
 const Actividad = require("../models/Actividad");
 const Materia = require("../models/Materia");
 
 const crearActividad = async (req, resp = response) => {
   const { nombre_actividad } = req.body;
+  const imagen = req.body.imagen_1;
   try {
     let actividad = await Actividad.findOne({
       where: { nombre_actividad: nombre_actividad },
@@ -17,6 +19,7 @@ const crearActividad = async (req, resp = response) => {
     }
     actividad = new Actividad({ ...req.body, estatus: 1 });
     await actividad.save();
+    console.log(imagen);
     resp.status(201).json({
       ok: true,
       actividad: actividad,
@@ -31,23 +34,23 @@ const crearActividad = async (req, resp = response) => {
 };
 
 const obtenerActividades = async (req, res = response) => {
-  let actividades = await Actividad.findAll();
+  let actividades = await Actividad.findAll({ where: { estatus: 1 } });
   res.json({
     ok: true,
     actividades,
   });
 };
 
-const obtenerActividadPorNombre = async (req, resp = response) => {
-  const { nombre } = req.params;
+const obtenerActividadPorId = async (req, resp = response) => {
+  const { id } = req.params;
   try {
     const actividadEncontrada = await Actividad.findOne({
-      where: { [Op.and]: [{ nombre_actividad: nombre }, { estatus: 1 }] },
+      where: { [Op.and]: [{ id_actividad: id }, { estatus: 1 }] },
     });
     if (!actividadEncontrada) {
       return resp
         .status(404)
-        .json({ ok: false, msg: "La actividad no se encontro con ese nombre" });
+        .json({ ok: false, msg: "La actividad no se encontro con ese id" });
     }
     resp.json({ ok: true, actividad: actividadEncontrada });
   } catch (error) {
@@ -58,7 +61,6 @@ const obtenerActividadPorNombre = async (req, resp = response) => {
 
 const actualizarActividad = async (req, resp = response) => {
   const actividadId = req.params.id;
-
   try {
     const actividad = await Actividad.findByPk(actividadId);
     if (!actividad) {
@@ -72,14 +74,28 @@ const actualizarActividad = async (req, resp = response) => {
         msg: "La actividad no se encontro",
       });
     }
-    const nuevaactividad = { ...req.body };
+    const nuevaActividad = { ...req.body };
 
-    const actividadActualizada = await Actividad.update(nuevaactividad, {
+    const actividadActualizada = await Actividad.update(nuevaActividad, {
       returning: true,
       where: { id_actividad: actividadId },
     });
 
     resp.json({ ok: true, actividad: actividadActualizada });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
+  }
+};
+
+const subirArchivo = async (req, resp = response) => {
+  const { actividad, materia } = req.params;
+
+  try {
+    const actividadCarpeta = actividad.replace(/\s+/g, "-");
+    const materiaCarpeta = materia.replace(/\s+/g, "-");
+    const respuesta = `/${materiaCarpeta.toLowerCase()}/${actividadCarpeta.toLowerCase()}/`;
+    resp.json({ ok: true, ruta: respuesta });
   } catch (error) {
     console.log(error);
     resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
@@ -197,9 +213,10 @@ const agregarUnaMateria = async (req, resp = response) => {
 module.exports = {
   crearActividad,
   obtenerActividades,
-  obtenerActividadPorNombre,
+  obtenerActividadPorId,
   actualizarActividad,
   darDeBajaActividad,
   eliminarActividad,
   agregarUnaMateria,
+  subirArchivo,
 };

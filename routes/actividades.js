@@ -2,14 +2,16 @@ const express = require("express");
 const router = express.Router();
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validar-campos");
+const { upload } = require("../helpers/storage");
 const {
   crearActividad,
   obtenerActividades,
   agregarUnaMateria,
-  obtenerActividadPorNombre,
   actualizarActividad,
   darDeBajaActividad,
   eliminarActividad,
+  obtenerActividadPorId,
+  subirArchivo,
 } = require("../controllers/actividadesController");
 
 const validarActividad = [
@@ -49,8 +51,13 @@ const validacionDeMateriaId = [
 router.post("/", validarActividad, crearActividad);
 router.get("/", obtenerActividades);
 router.put("/materia/:id", validacionDeMateriaId, agregarUnaMateria);
-router.get("/:nombre", obtenerActividadPorNombre);
+router.get("/:id", obtenerActividadPorId);
 router.put("/:id", validarActividad, actualizarActividad);
+router.put(
+  "/subir/archivo/:materia/:actividad",
+  upload.single("archivo"),
+  subirArchivo
+);
 router.put("/baja/:id", darDeBajaActividad);
 router.delete("/:id", eliminarActividad);
 

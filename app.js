@@ -3,15 +3,17 @@ require("dotenv").config();
 const cors = require("cors");
 const db = require("./database/config");
 const inicializarDB = require("./database/inicializarDb");
+const path = require("path");
 const app = express();
 
 //CORS
 app.use(cors());
-
+app.use(express.urlencoded({ extended: true }));
 // Lectura y parseo del body
 app.use(express.json());
-
+// app.use(express.urlencoded({ limit: "50mb" }));
 //Rutas
+app.use(express.static(path.join(__dirname, "imagenes")));
 app.use("/api/usuario", require("./routes/usuario"));
 app.use("/api/materias", require("./routes/materias"));
 app.use("/api/actividades", require("./routes/actividades"));

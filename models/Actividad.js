@@ -29,7 +29,7 @@ const Actividad = db.define(
       allowNull: true,
     },
     imagen_2: {
-      type: Sequelize.BLOB,
+      type: Sequelize.TEXT,
       allowNull: true,
     },
     video: {
@@ -60,6 +60,10 @@ const Actividad = db.define(
       validate: {
         max: 1,
       },
+    },
+    id_materia: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
     },
   },
   {

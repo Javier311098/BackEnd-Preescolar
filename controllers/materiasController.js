@@ -1,9 +1,11 @@
 const { response } = require("express");
 const { Op } = require("sequelize");
+const fs = require("fs");
 const Materia = require("../models/Materia");
 
 const crearMateria = async (req, resp = response) => {
   const { nombre_materia } = req.body;
+  const dir = "./imagenes";
   try {
     let materia = await Materia.findOne({
       where: { nombre_materia: nombre_materia },
@@ -18,11 +20,13 @@ const crearMateria = async (req, resp = response) => {
     await materia.save();
     resp.status(201).json({
       ok: true,
-      id: materia.id_materia,
-      nombre: materia.nombre_materia,
-      descripcion: materia.descripcion,
-      estatus: materia.estatus,
+      materia: materia,
     });
+
+    const nombreCarpeta = materia.nombre_materia.replace(" ", "_");
+    if (!fs.existsSync(`${dir}/${nombreCarpeta.toLowerCase()}`)) {
+      fs.mkdirSync(`${dir}/${nombreCarpeta.toLowerCase()}`);
+    }
   } catch (error) {
     console.log(error);
     resp.status(500).json({
@@ -33,7 +37,7 @@ const crearMateria = async (req, resp = response) => {
 };
 
 const obtenerMaterias = async (req, res = response) => {
-  let materias = await Materia.findAll();
+  let materias = await Materia.findAll({ where: { estatus: 1 } });
   res.json({
     ok: true,
     materias,
@@ -60,6 +64,7 @@ const obtenerMateriaPorNombre = async (req, resp = response) => {
 
 const actualizarMateria = async (req, resp = response) => {
   const materiaId = req.params.id;
+  const dir = "./imagenes";
 
   try {
     const materia = await Materia.findByPk(materiaId);
@@ -74,6 +79,10 @@ const actualizarMateria = async (req, resp = response) => {
     });
 
     resp.json({ ok: true, materia: materiaActualizada });
+    const nombreCarpeta = nuevaMateria.nombre_materia.replace(" ", "_");
+    if (!fs.existsSync(`${dir}/${nombreCarpeta.toLowerCase()}`)) {
+      fs.mkdirSync(`${dir}/${nombreCarpeta.toLowerCase()}`);
+    }
   } catch (error) {
     console.log(error);
     resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
