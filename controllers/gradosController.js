@@ -11,15 +11,14 @@ const crearGrado = async (req, resp = response) => {
     if (grado) {
       return resp.status(400).json({
         ok: false,
-        msg: "Ya existe la grado",
+        msg: "Ya existe el grado",
       });
     }
     grado = new Grado({ ...req.body, estatus: 1 });
     await grado.save();
     resp.status(201).json({
       ok: true,
-      id: grado.id_grado,
-      nombre: grado.nombre_grado,
+      grado: { id_grado: grado.id_grado, nombre_grado: grado.nombre_grado },
     });
   } catch (error) {
     console.log(error);
@@ -31,7 +30,7 @@ const crearGrado = async (req, resp = response) => {
 };
 
 const obtenerGrados = async (req, res = response) => {
-  let grados = await Grado.findAll();
+  let grados = await Grado.findAll({ where: { estatus: 1 } });
   res.json({
     ok: true,
     grados,

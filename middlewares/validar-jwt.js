@@ -11,9 +11,10 @@ const validarJWT = (req, resp = response, next) => {
     });
   }
   try {
-    const { uid, name } = jwt.verify(token, process.env.SECRET_JWT);
+    const { uid, name, role } = jwt.verify(token, process.env.SECRET_JWT);
     req.uid = uid;
     req.name = name;
+    req.role = role;
   } catch (error) {
     return resp.status(401).json({
       ok: false,
