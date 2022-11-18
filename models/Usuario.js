@@ -20,28 +20,19 @@ const Usuario = db.define(
     },
     direccion_residencia: {
       type: Sequelize.TEXT,
-      allowNull: false,
-      validate: {
-        max: 100,
-      },
+      allowNull: true,
     },
     telefono: {
       type: Sequelize.TEXT,
       allowNull: true,
-      validate: {
-        max: 100,
-      },
     },
     telefono_emergencia_1: {
       type: Sequelize.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     telefono_emergencia_2: {
       type: Sequelize.TEXT,
       allowNull: true,
-      validate: {
-        max: 100,
-      },
     },
     correo_electronico: {
       type: Sequelize.TEXT,
@@ -66,14 +57,14 @@ const Usuario = db.define(
       allowNull: true,
     },
     foto_usuario: {
-      type: Sequelize.BLOB,
+      type: Sequelize.TEXT,
       allowNull: true,
     },
     password_usuario: {
       type: Sequelize.TEXT,
       allowNull: true,
       validate: {
-        max: 255,
+        min: 255,
       },
     },
     estatus: {
