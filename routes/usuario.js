@@ -7,6 +7,8 @@ const {
   loginUsuario,
   obtenerUsuarios,
   obtenerUsuarioPorNombre,
+  obtenerRelacionPadre,
+  obtenerRelacionDocente,
   actualizarUsuario,
   eliminarUsuario,
   darDeBajaUsuario,
@@ -14,6 +16,8 @@ const {
   obtenerUsuarioRol,
   relacionarEstudianteDocente,
   revalidarToken,
+  obtenerAlumnos,
+  obtenerRelacionesPadres,
 } = require("../controllers/usuarioController");
 const { validarJWT } = require("../middlewares/validar-jwt");
 
@@ -22,17 +26,17 @@ const validadorUsuario = [
     .not()
     .isEmpty()
     .isLength({ min: 4 }),
-  check("direccion_residencia", "Debe registrarse la direccion del usuario")
-    .not()
-    .isEmpty()
-    .isLength({ max: 100 }),
-  check(
-    "telefono_emergencia_1",
-    "Debe registrarse el telefono de emergencia  del usuario"
-  )
-    .not()
-    .isEmpty()
-    .isLength({ max: 100 }),
+  // check("direccion_residencia", "Debe registrarse la direccion del usuario")
+  //   .not()
+  //   .isEmpty()
+  //   .isLength({ max: 100 }),
+  // check(
+  //   "telefono_emergencia_1",
+  //   "Debe registrarse el telefono de emergencia  del usuario"
+  // )
+  //   .not()
+  //   .isEmpty()
+  //   .isLength({ max: 100 }),
   check("edad", "Debe registrarse la edad del usuario").not().isEmpty().isInt(),
 
   validarCampos,
@@ -60,8 +64,12 @@ router.post("/", validadorUsuario, crearUsuario);
 router.post("/login", validationLogin, loginUsuario);
 router.get("/renew", validarJWT, revalidarToken);
 router.get("/", obtenerUsuarios);
+router.get("/alumnos", obtenerAlumnos);
 router.get("/rol/:id", obtenerUsuarioRol);
 router.get("/:nombre", obtenerUsuarioPorNombre);
+router.get("/relacion/padre/:id", obtenerRelacionPadre);
+router.get("/relaciones/padre", obtenerRelacionesPadres);
+router.get("/relacion/docente", obtenerRelacionDocente);
 router.put("/baja/:id", darDeBajaUsuario);
 router.put("/:id", validadorUsuario, actualizarUsuario);
 router.delete("/:id", eliminarUsuario);

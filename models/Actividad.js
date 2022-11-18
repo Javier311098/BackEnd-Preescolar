@@ -25,7 +25,7 @@ const Actividad = db.define(
       },
     },
     imagen_1: {
-      type: Sequelize.BLOB,
+      type: Sequelize.TEXT,
       allowNull: true,
     },
     imagen_2: {

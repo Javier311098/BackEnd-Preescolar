@@ -30,17 +30,34 @@ const crearUsuario = async (req, resp = response) => {
     }
 
     await usuario.save();
+
+    if (usuario.id_rol === 3) {
+      return resp.status(201).json({
+        ok: true,
+        usuario: {
+          id_usuario: usuario.id_usuario,
+          nombre_usuario: usuario.nombre_usuario,
+          direccion_residencia: usuario.direccion_residencia,
+          telefono_emergencia_1: usuario.telefono_emergencia_1,
+          telefono_emergencia_2: usuario.telefono_emergencia_2,
+          tipo_sangre: usuario.tipo_sangre,
+          edad: usuario.edad,
+          fecha_nacimiento: usuario.fecha_nacimiento,
+          foto_usuario: usuario.foto_usuario,
+          id_grado: usuario.id_grado,
+        },
+      });
+    }
+
     resp.status(201).json({
       ok: true,
-      id: usuario.usuario_id,
-      nombre: usuario.nombre_usuario,
+      usuario,
     });
   } catch (error) {
     console.log(error);
     resp.status(500).json({
       ok: false,
       msg: "Por favor comuniquese con el administrador",
-      usuario: correo_electronico,
     });
   }
 };
@@ -107,12 +124,73 @@ const obtenerUsuarios = async (req, res = response) => {
   });
 };
 
-const obtenerUsuarioRol = async (req, res = response) => {
-  const { id } = req.params;
-  let usuario = await Usuario.findAll({ where: { id_rol: id } });
+const obtenerAlumnos = async (req, res = response) => {
+  let usuario = await Usuario.findAll({ where: { id } });
   res.json({
     ok: true,
     usuario,
+  });
+};
+
+const obtenerUsuarioRol = async (req, res = response) => {
+  const { id } = req.params;
+  let usuario = await Usuario.findAll({
+    where: { [Op.and]: [{ id_rol: id }, { estatus: 1 }] },
+  });
+
+  res.json({
+    ok: true,
+    usuario,
+  });
+};
+
+const obtenerRelacionPadre = async (req, res = response) => {
+  const { id } = req.params;
+  let relacion = await EstuTutor.findOne({
+    where: { [Op.and]: [{ id_usuario_tutor: id }, { estatus: 1 }] },
+  });
+
+  const alumnos = await Usuario.findAll({
+    where: { [Op.and]: [{ id_rol: 3 }, { estatus: 1 }] },
+  });
+
+  const alumnoSeleccionado = alumnos.find(
+    (alumno) => alumno.id_usuario === relacion.id_usuario_estudiante
+  );
+
+  const filtrado = alumnos.filter(
+    (alumno) => alumno.id_usuario !== alumnoSeleccionado.id_usuario
+  );
+
+  res.json({
+    ok: true,
+    alumnoSeleccionado,
+  });
+};
+
+const obtenerRelacionesPadres = async (req, res = response) => {
+  let relaciones = await EstuTutor.findAll({
+    where: { estatus: 1 },
+  });
+
+  res.json({
+    ok: true,
+    relaciones,
+  });
+};
+
+const obtenerRelacionDocente = async (req, res = response) => {
+  // let docente = await Usuario.findOne({
+  //   where: { [Op.and]: [{ id_rol: 2 }, { estatus: 1 }, { estatus: 1 }] },
+  // });
+
+  // let alumnos = await Usuario.findAll({
+  //   where: { [Op.and]: [{ id_rol: id }, { estatus: 1 }] },
+  // });
+
+  res.json({
+    ok: true,
+    // usuario,
   });
 };
 
@@ -395,12 +473,16 @@ module.exports = {
   loginUsuario,
   revalidarToken,
   obtenerUsuarios,
+  obtenerAlumnos,
   obtenerUsuarioRol,
   obtenerUsuarioPorNombre,
+  obtenerRelacionPadre,
+  obtenerRelacionDocente,
   darDeBajaUsuario,
   actualizarUsuario,
   eliminarUsuario,
   relacionarEstudianteTutores,
+  obtenerRelacionesPadres,
   relacionarEstudianteDocente,
   darDeBajaEstuTutorRelacion,
   darDeBajaEstuDoceRelacion,
