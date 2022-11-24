@@ -1,8 +1,8 @@
 const { Sequelize } = require("sequelize");
 const db = require("../database/config");
+const Actividad = require("./Actividad");
 const EstuDoce = require("./Estudiante_Docente");
 const Grado = require("./Grado");
-const Materia = require("./Materia");
 const Periodo = require("./Periodo");
 
 const Clase = db.define(
@@ -13,10 +13,10 @@ const Clase = db.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    id_esdo: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-    },
+    // id_esdo: {
+    //   type: Sequelize.INTEGER,
+    //   allowNull: false,
+    // },
     id_grado: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -25,7 +25,7 @@ const Clase = db.define(
       type: Sequelize.INTEGER,
       allowNull: false,
     },
-    id_materia: {
+    id_actividad: {
       type: Sequelize.INTEGER,
       allowNull: false,
     },
@@ -47,8 +47,8 @@ const Clase = db.define(
 );
 
 // 1:M
-Clase.belongsTo(EstuDoce, { foreignKey: "id_esdo" });
-EstuDoce.hasMany(Clase, { foreignKey: "id_esdo" });
+// Clase.belongsTo(EstuDoce, { foreignKey: "id_esdo" });
+// EstuDoce.hasMany(Clase, { foreignKey: "id_esdo" });
 
 // 1:M
 Clase.belongsTo(Grado, { foreignKey: "id_grado" });
@@ -59,7 +59,7 @@ Clase.belongsTo(Periodo, { foreignKey: "id_periodo" });
 Periodo.hasMany(Clase, { foreignKey: "id_periodo" });
 
 // 1:M
-Clase.belongsTo(Materia, { foreignKey: "id_materia" });
-Materia.hasMany(Clase, { foreignKey: "id_materia" });
+Clase.belongsTo(Actividad, { foreignKey: "id_actividad" });
+Actividad.hasMany(Clase, { foreignKey: "id_actividad" });
 
 module.exports = Clase;
