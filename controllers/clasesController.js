@@ -1,48 +1,52 @@
 const { response } = require("express");
 const { Op } = require("sequelize");
+const Actividad = require("../models/Actividad");
 const Clase = require("../models/Clase");
+const EstuDoce = require("../models/Estudiante_Docente");
+const Grado = require("../models/Grado");
+const Periodo = require("../models/Periodo");
 
 const crearClase = async (req, resp = response) => {
-  const { id_esdo, id_materia, id_grado, id_periodo } = req.body;
+  const { id_esdo, id_actividad, id_grado, id_periodo } = req.body;
   try {
-    let clase = await Clase.findOne({
-      where: { id_esdo: id_esdo },
+    // let relacion = await EstuDoce.findOne({
+    //   where: { id_esdo: id_esdo },
+    // });
+    // if (!relacion) {
+    //   return resp.status(400).json({
+    //     ok: false,
+    //     msg: "No existe los usuarios",
+    //   });
+    // }
+    let actividad = await Actividad.findOne({
+      where: { id_actividad: id_actividad },
     });
-    if (!clase) {
+    if (!actividad) {
       return resp.status(400).json({
         ok: false,
-        msg: "No existe los usuarios",
+        msg: "No existe la actividad",
       });
     }
-    clase = await Clase.findOne({
-      where: { id_materia: id_materia },
-    });
-    if (!clase) {
-      return resp.status(400).json({
-        ok: false,
-        msg: "No existe la materia",
-      });
-    }
-    clase = await Clase.findOne({
+    let grado = await Grado.findOne({
       where: { id_grado: id_grado },
     });
-    if (!clase) {
+    if (!grado) {
       return resp.status(400).json({
         ok: false,
-        msg: "No existe la materia",
+        msg: "No existe el grado",
       });
     }
-    clase = await Clase.findOne({
+    let periodo = await Periodo.findOne({
       where: { id_periodo: id_periodo },
     });
-    if (!clase) {
+    if (!periodo) {
       return resp.status(400).json({
         ok: false,
-        msg: "No existe la materia",
+        msg: "No existe el periodo",
       });
     }
 
-    clase = new Clase(req.body);
+    let clase = new Clase(req.body);
     await clase.save();
     resp.status(201).json({
       ok: true,
@@ -58,7 +62,11 @@ const crearClase = async (req, resp = response) => {
 };
 
 const obtenerClases = async (req, res = response) => {
-  let clases = await Clase.findAll();
+  let clases = await Clase.findAll({ where: { estatus: 1 } });
+  let periodo = await Periodo.findByPk();
+  let actividad = await Actividad.findByPk();
+  let grado = await Grado.findByPk();
+
   res.json({
     ok: true,
     clases,
@@ -84,6 +92,25 @@ const obtenerClasePorMateria = async (req, resp = response) => {
   }
 };
 
+const obtenerClasePorGrado = async (req, resp = response) => {
+  const { id } = req.params;
+  try {
+    const claseEncontrada = await Clase.findAll({
+      where: { [Op.and]: [{ id_grado: id }, { estatus: 1 }] },
+    });
+    if (!claseEncontrada) {
+      return resp.status(404).json({
+        ok: false,
+        msg: "La clase no se encontro para ese grupo",
+      });
+    }
+    resp.json({ ok: true, clase: claseEncontrada });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
+  }
+};
+
 const actualizarClase = async (req, resp = response) => {
   const claseId = req.params.id;
 
@@ -98,9 +125,9 @@ const actualizarClase = async (req, resp = response) => {
         msg: "La clase no se encontro",
       });
     }
-    const nuevaclase = { ...req.body };
+    const nuevaClase = { ...req.body };
 
-    const claseActualizada = await Clase.update(nuevaclase, {
+    const claseActualizada = await Clase.update(nuevaClase, {
       returning: true,
       where: { id_clase: claseId },
     });
@@ -180,6 +207,7 @@ module.exports = {
   crearClase,
   obtenerClases,
   obtenerClasePorMateria,
+  obtenerClasePorGrado,
   actualizarClase,
   darDeBajaClase,
   eliminarClase,

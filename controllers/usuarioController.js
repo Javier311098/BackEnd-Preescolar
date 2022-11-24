@@ -236,6 +236,64 @@ const actualizarUsuario = async (req, resp = response) => {
   }
 };
 
+const actualizarRelacionAlumnoTutor = async (req, resp = response) => {
+  const padreId = req.params.id;
+  try {
+    const tutor = await EstuTutor.findOne({
+      where: { id_usuario_tutor: padreId },
+    });
+    if (!tutor) {
+      return resp.status(404).json({ ok: false, msg: "El tutor no existe" });
+    }
+
+    const nuevaRelacion = { ...req.body };
+
+    const relacionActualizada = await EstuTutor.update(nuevaRelacion, {
+      returning: true,
+      where: { id_usuario_tutor: padreId },
+    });
+
+    resp.json({ ok: true, relacion: relacionActualizada });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({ ok: false, msg: "Hable el administrador" });
+  }
+};
+
+const darDeBajaRelacionAlumnoTutor = async (req, resp = response) => {
+  const padreId = req.params.id;
+
+  try {
+    const tutor = await EstuTutor.findOne({
+      where: { id_usuario_tutor: padreId },
+    });
+    if (!tutor) {
+      return resp.status(404).json({ ok: false, msg: "El tutor no existe" });
+    }
+    if (tutor.estatus === 0) {
+      return resp.status(404).json({
+        ok: false,
+        msg: "la relacion ya se dio de baja anteriormente",
+      });
+    }
+    const relacionDeBaja = await EstuTutor.update(
+      { ...req.body, estatus: 0 },
+      {
+        returning: true,
+        where: { id_usuario_tutor: padreId },
+      }
+    );
+    resp.json({
+      ok: true,
+      msg: "Se dio de baja correctamente",
+      relacion: relacionDeBaja,
+    });
+  } catch (error) {
+    console.log(error);
+    resp.status(500).json({ ok: false, msg: "Hable el administrador" });
+  }
+};
+
 const darDeBajaUsuario = async (req, resp = response) => {
   const usuarioId = req.params.id;
   try {
@@ -486,4 +544,6 @@ module.exports = {
   relacionarEstudianteDocente,
   darDeBajaEstuTutorRelacion,
   darDeBajaEstuDoceRelacion,
+  actualizarRelacionAlumnoTutor,
+  darDeBajaRelacionAlumnoTutor,
 };

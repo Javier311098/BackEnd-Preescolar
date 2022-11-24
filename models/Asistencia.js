@@ -35,8 +35,4 @@ const Asistencia = db.define(
   }
 );
 
-// 1:1
-Asistencia.belongsTo(Clase, { foreignKey: "id_clase" });
-Clase.hasOne(Asistencia, { foreignKey: "id_clase" });
-
 module.exports = Asistencia;

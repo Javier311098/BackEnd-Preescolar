@@ -18,6 +18,8 @@ const {
   revalidarToken,
   obtenerAlumnos,
   obtenerRelacionesPadres,
+  actualizarRelacionAlumnoTutor,
+  darDeBajaRelacionAlumnoTutor,
 } = require("../controllers/usuarioController");
 const { validarJWT } = require("../middlewares/validar-jwt");
 
@@ -71,12 +73,18 @@ router.get("/relacion/padre/:id", obtenerRelacionPadre);
 router.get("/relaciones/padre", obtenerRelacionesPadres);
 router.get("/relacion/docente", obtenerRelacionDocente);
 router.put("/baja/:id", darDeBajaUsuario);
+router.put("/baja/relacion/tutor/:id", darDeBajaRelacionAlumnoTutor);
 router.put("/:id", validadorUsuario, actualizarUsuario);
 router.delete("/:id", eliminarUsuario);
 router.post(
   "/relacion/tutor",
   validadorRelacionTutor,
   relacionarEstudianteTutores
+);
+router.put(
+  "/relacion/tutor/:id",
+  validadorRelacionTutor,
+  actualizarRelacionAlumnoTutor
 );
 router.post(
   "/relacion/docente",
