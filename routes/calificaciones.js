@@ -9,6 +9,7 @@ const {
   actualizarCalificacion,
   darDeBajaCalificacion,
   eliminarCalificacion,
+  obtenerCalificacionesPorAlumnoYPeriodo,
 } = require("../controllers/CalificacionesController");
 
 const validarCalificacion = [
@@ -23,6 +24,10 @@ const validarCalificacion = [
 router.post("/", validarCalificacion, crearCalificacion);
 router.get("/", obtenerCalificaciones);
 router.get("/:nombre", obtenerCalificacionPorNombre);
+router.get(
+  "/alumno/:alumnoId/:periodoId",
+  obtenerCalificacionesPorAlumnoYPeriodo
+);
 router.put("/:id", validarCalificacion, actualizarCalificacion);
 router.put("/baja/:id", darDeBajaCalificacion);
 router.delete("/:id", eliminarCalificacion);
