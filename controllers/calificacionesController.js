@@ -3,15 +3,21 @@ const { Op } = require("sequelize");
 const Calificacion = require("../models/Calificacion");
 
 const crearCalificacion = async (req, resp = response) => {
-  const { id_materia } = req.body;
+  const { id_materia, id_usuario, id_periodo } = req.body;
   try {
     let calificacion = await Calificacion.findOne({
-      where: { id_materia: id_materia },
+      where: {
+        [Op.and]: [
+          { id_usuario: id_usuario },
+          { id_periodo: id_periodo },
+          { id_materia: id_materia },
+        ],
+      },
     });
     if (calificacion) {
       return resp.status(400).json({
         ok: false,
-        msg: "Ya existe la Calificacion para esa materia",
+        msg: "Ya existe la calificacion para ese alumno en ese periodo",
       });
     }
     calificacion = new Calificacion(req.body);
@@ -32,6 +38,23 @@ const crearCalificacion = async (req, resp = response) => {
 const obtenerCalificaciones = async (req, res = response) => {
   let calificaciones = await Calificacion.findAll();
   res.json({
+    ok: true,
+    calificaciones,
+  });
+};
+
+const obtenerCalificacionesPorAlumnoYPeriodo = async (req, resp = response) => {
+  const { alumnoId, periodoId } = req.params;
+  const calificaciones = await Calificacion.findAll({
+    where: { [Op.and]: [{ id_usuario: alumnoId }, { id_periodo: periodoId }] },
+  });
+  // if (!calificaciones) {
+  //   return resp.status(404).json({
+  //     ok: false,
+  //     msg: "No se encontraron calificaciones para ese alumno o periodo",
+  //   });
+  // }
+  resp.json({
     ok: true,
     calificaciones,
   });
@@ -60,7 +83,7 @@ const actualizarCalificacion = async (req, resp = response) => {
   const calificacionId = req.params.id;
 
   try {
-    const calificacion = await Calificacion.findByPk(CalificacionId);
+    const calificacion = await Calificacion.findByPk(calificacionId);
     if (!calificacion) {
       return resp
         .status(404)
@@ -159,6 +182,7 @@ const eliminarCalificacion = async (req, resp = response) => {
 
 module.exports = {
   crearCalificacion,
+  obtenerCalificacionesPorAlumnoYPeriodo,
   obtenerCalificaciones,
   obtenerCalificacionPorNombre,
   actualizarCalificacion,
