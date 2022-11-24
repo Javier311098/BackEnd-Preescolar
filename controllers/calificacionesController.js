@@ -11,6 +11,7 @@ const crearCalificacion = async (req, resp = response) => {
           { id_usuario: id_usuario },
           { id_periodo: id_periodo },
           { id_materia: id_materia },
+          { estatus: 1 },
         ],
       },
     });
@@ -46,7 +47,13 @@ const obtenerCalificaciones = async (req, res = response) => {
 const obtenerCalificacionesPorAlumnoYPeriodo = async (req, resp = response) => {
   const { alumnoId, periodoId } = req.params;
   const calificaciones = await Calificacion.findAll({
-    where: { [Op.and]: [{ id_usuario: alumnoId }, { id_periodo: periodoId }] },
+    where: {
+      [Op.and]: [
+        { id_usuario: alumnoId },
+        { id_periodo: periodoId },
+        { estatus: 1 },
+      ],
+    },
   });
   // if (!calificaciones) {
   //   return resp.status(404).json({
