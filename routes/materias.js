@@ -5,7 +5,6 @@ const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearMateria,
   obtenerMaterias,
-  obtenerMateriaPorNombre,
   actualizarMateria,
   darDeBajaMateria,
   eliminarMateria,
@@ -18,8 +17,7 @@ const validarMateria = [
 ];
 
 router.post("/", validarMateria, crearMateria);
-router.get("/", obtenerMaterias);
-router.get("/:nombre", obtenerMateriaPorNombre);
+router.get("/:roleId", obtenerMaterias);
 router.put("/:id", validarMateria, actualizarMateria);
 router.put("/baja/:id", darDeBajaMateria);
 router.delete("/:id", eliminarMateria);

@@ -10,7 +10,6 @@ const {
   actualizarActividad,
   darDeBajaActividad,
   eliminarActividad,
-  obtenerActividadPorId,
   subirArchivo,
 } = require("../controllers/actividadesController");
 
@@ -49,9 +48,8 @@ const validacionDeMateriaId = [
 ];
 
 router.post("/", validarActividad, crearActividad);
-router.get("/", obtenerActividades);
+router.get("/:roleId", obtenerActividades);
 router.put("/materia/:id", validacionDeMateriaId, agregarUnaMateria);
-router.get("/:id", obtenerActividadPorId);
 router.put("/:id", validarActividad, actualizarActividad);
 router.put(
   "/subir/archivo/:materia/:actividad",

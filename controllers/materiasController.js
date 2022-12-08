@@ -37,7 +37,14 @@ const crearMateria = async (req, resp = response) => {
 };
 
 const obtenerMaterias = async (req, res = response) => {
-  let materias = await Materia.findAll({ where: { estatus: 1 } });
+  const { roleId } = req.params;
+  let materias;
+  if (parseInt(roleId) !== 1) {
+    materias = await Materia.findAll({ where: { estatus: 1 } });
+  } else {
+    materias = await Materia.findAll();
+  }
+
   res.json({
     ok: true,
     materias,

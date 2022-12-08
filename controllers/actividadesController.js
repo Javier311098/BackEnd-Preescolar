@@ -34,7 +34,13 @@ const crearActividad = async (req, resp = response) => {
 };
 
 const obtenerActividades = async (req, res = response) => {
-  let actividades = await Actividad.findAll({ where: { estatus: 1 } });
+  const { roleId } = req.params;
+  let actividades;
+  if (parseInt(roleId) !== 1) {
+    actividades = await Actividad.findAll({ where: { estatus: 1 } });
+  } else {
+    actividades = await Actividad.findAll();
+  }
   res.json({
     ok: true,
     actividades,
@@ -68,12 +74,7 @@ const actualizarActividad = async (req, resp = response) => {
         .status(404)
         .json({ ok: false, msg: "La actividad no existe" });
     }
-    if (actividad.estatus === 0) {
-      return resp.status(404).json({
-        ok: false,
-        msg: "La actividad no se encontro",
-      });
-    }
+
     const nuevaActividad = { ...req.body };
 
     const actividadActualizada = await Actividad.update(nuevaActividad, {

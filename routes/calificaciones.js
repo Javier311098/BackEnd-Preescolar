@@ -25,7 +25,7 @@ router.post("/", validarCalificacion, crearCalificacion);
 router.get("/", obtenerCalificaciones);
 router.get("/:nombre", obtenerCalificacionPorNombre);
 router.get(
-  "/alumno/:alumnoId/:periodoId",
+  "/alumno/:alumnoId/:periodoId/:roleId",
   obtenerCalificacionesPorAlumnoYPeriodo
 );
 router.put("/:id", validarCalificacion, actualizarCalificacion);
