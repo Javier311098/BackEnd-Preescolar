@@ -45,16 +45,28 @@ const obtenerCalificaciones = async (req, res = response) => {
 };
 
 const obtenerCalificacionesPorAlumnoYPeriodo = async (req, resp = response) => {
-  const { alumnoId, periodoId } = req.params;
-  const calificaciones = await Calificacion.findAll({
-    where: {
-      [Op.and]: [
-        { id_usuario: alumnoId },
-        { id_periodo: periodoId },
-        { estatus: 1 },
-      ],
-    },
-  });
+  const { alumnoId, periodoId, roleId } = req.params;
+
+  let calificaciones;
+
+  if (parseInt(roleId) !== 1) {
+    calificaciones = await Calificacion.findAll({
+      where: {
+        [Op.and]: [
+          { id_usuario: alumnoId },
+          { id_periodo: periodoId },
+          { estatus: 1 },
+        ],
+      },
+    });
+  } else {
+    calificaciones = await Calificacion.findAll({
+      where: {
+        [Op.and]: [{ id_usuario: alumnoId }, { id_periodo: periodoId }],
+      },
+    });
+  }
+
   // if (!calificaciones) {
   //   return resp.status(404).json({
   //     ok: false,
@@ -96,12 +108,7 @@ const actualizarCalificacion = async (req, resp = response) => {
         .status(404)
         .json({ ok: false, msg: "La Calificacion no existe" });
     }
-    if (calificacion.estatus === 0) {
-      return resp.status(404).json({
-        ok: false,
-        msg: "La calificacion no se encontro",
-      });
-    }
+
     const nuevaCalificacion = { ...req.body };
 
     const calificacionActualizada = await Calificacion.update(

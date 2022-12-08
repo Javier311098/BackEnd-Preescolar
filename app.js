@@ -20,7 +20,6 @@ app.use("/api/actividades", require("./routes/actividades"));
 app.use("/api/grados", require("./routes/grados"));
 app.use("/api/periodos", require("./routes/periodos"));
 app.use("/api/calificaciones", require("./routes/calificaciones"));
-app.use("/api/asistencias", require("./routes/asistencias"));
 app.use("/api/clases", require("./routes/clases"));
 app.use("/api/roles", require("./routes/roles"));
 
