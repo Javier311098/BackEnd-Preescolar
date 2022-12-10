@@ -71,7 +71,7 @@ router.get("/rol/:id", obtenerUsuarioRol);
 router.get("/:nombre", obtenerUsuarioPorNombre);
 router.get("/relacion/padre/:id", obtenerRelacionPadre);
 router.get("/relaciones/padre", obtenerRelacionesPadres);
-router.get("/relacion/docente", obtenerRelacionDocente);
+router.get("/relacion/docente/:id", obtenerRelacionDocente);
 router.put("/baja/:id", darDeBajaUsuario);
 router.put("/baja/relacion/tutor/:id", darDeBajaRelacionAlumnoTutor);
 router.put("/:id", validadorUsuario, actualizarUsuario);

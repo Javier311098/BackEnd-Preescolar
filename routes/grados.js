@@ -5,7 +5,6 @@ const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearGrado,
   obtenerGrados,
-  obtenerGradoPorNombre,
   actualizarGrado,
   darDeBajaGrado,
   eliminarGrado,
@@ -19,8 +18,7 @@ const validarGrado = [
 
 // router.use(validarJWT);
 router.post("/", validarGrado, crearGrado);
-router.get("/", obtenerGrados);
-router.get("/:nombre", obtenerGradoPorNombre);
+router.get("/:roleId", obtenerGrados);
 router.put("/:id", validarGrado, actualizarGrado);
 router.put("/baja/:id", darDeBajaGrado);
 router.delete("/:id", eliminarGrado);
