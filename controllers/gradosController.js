@@ -30,29 +30,17 @@ const crearGrado = async (req, resp = response) => {
 };
 
 const obtenerGrados = async (req, res = response) => {
-  let grados = await Grado.findAll({ where: { estatus: 1 } });
+  const { roleId } = req.params;
+  let grados;
+  if (parseInt(roleId) !== 1) {
+    grados = await Grado.findAll({ where: { estatus: 1 } });
+  } else {
+    grados = await Grado.findAll();
+  }
   res.json({
     ok: true,
     grados,
   });
-};
-
-const obtenerGradoPorNombre = async (req, resp = response) => {
-  const { nombre } = req.params;
-  try {
-    const gradoEncontrada = await Grado.findOne({
-      where: { [Op.and]: [{ nombre_grado: nombre }, { estatus: 1 }] },
-    });
-    if (!gradoEncontrada) {
-      return resp
-        .status(404)
-        .json({ ok: false, msg: "La grado no se encontro con ese nombre" });
-    }
-    resp.json({ ok: true, grado: gradoEncontrada });
-  } catch (error) {
-    console.log(error);
-    resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
-  }
 };
 
 const actualizarGrado = async (req, resp = response) => {
@@ -143,7 +131,6 @@ const eliminarGrado = async (req, resp = response) => {
 module.exports = {
   crearGrado,
   obtenerGrados,
-  obtenerGradoPorNombre,
   actualizarGrado,
   darDeBajaGrado,
   eliminarGrado,

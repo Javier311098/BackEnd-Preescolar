@@ -5,7 +5,6 @@ const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearPeriodo,
   obtenerPeriodos,
-  obtenerPeriodoPorNombre,
   actualizarPeriodo,
   darDeBajaPeriodo,
   eliminarPeriodo,
@@ -32,8 +31,7 @@ const validacionDeMateriaId = [
 ];
 
 router.post("/", validarPeriodo, crearPeriodo);
-router.get("/", obtenerPeriodos);
-router.get("/:nombre", obtenerPeriodoPorNombre);
+router.get("/:roleId", obtenerPeriodos);
 router.put("/:id", validarPeriodo, actualizarPeriodo);
 router.put("/baja/:id", darDeBajaPeriodo);
 router.delete("/:id", eliminarPeriodo);

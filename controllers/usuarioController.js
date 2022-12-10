@@ -149,22 +149,25 @@ const obtenerRelacionPadre = async (req, res = response) => {
   let relacion = await EstuTutor.findOne({
     where: { [Op.and]: [{ id_usuario_tutor: id }, { estatus: 1 }] },
   });
+  if (!relacion) {
+    return res.json({
+      ok: false,
+      msg: "no existe padre",
+    });
+  }
 
-  const alumnos = await Usuario.findAll({
-    where: { [Op.and]: [{ id_rol: 3 }, { estatus: 1 }] },
+  const hijo = await Usuario.findOne({
+    where: {
+      [Op.and]: [
+        { id_usuario: relacion.id_usuario_estudiante },
+        { estatus: 1 },
+      ],
+    },
   });
-
-  const alumnoSeleccionado = alumnos.find(
-    (alumno) => alumno.id_usuario === relacion.id_usuario_estudiante
-  );
-
-  const filtrado = alumnos.filter(
-    (alumno) => alumno.id_usuario !== alumnoSeleccionado.id_usuario
-  );
 
   res.json({
     ok: true,
-    alumnoSeleccionado,
+    hijo,
   });
 };
 
@@ -180,17 +183,27 @@ const obtenerRelacionesPadres = async (req, res = response) => {
 };
 
 const obtenerRelacionDocente = async (req, res = response) => {
-  // let docente = await Usuario.findOne({
-  //   where: { [Op.and]: [{ id_rol: 2 }, { estatus: 1 }, { estatus: 1 }] },
-  // });
+  const { id } = req.params;
+  let docente = await Usuario.findOne({
+    where: { [Op.and]: [{ id_usuario: id }, { estatus: 1 }] },
+  });
 
-  // let alumnos = await Usuario.findAll({
-  //   where: { [Op.and]: [{ id_rol: id }, { estatus: 1 }] },
-  // });
+  if (!docente) {
+    return res.json({
+      ok: false,
+      msg: "no existe docente",
+    });
+  }
+
+  const estudiantes = await Usuario.findAll({
+    where: {
+      [Op.and]: [{ id_grado: docente.id_grado }, { id_rol: 3 }, { estatus: 1 }],
+    },
+  });
 
   res.json({
     ok: true,
-    // usuario,
+    estudiantes,
   });
 };
 
@@ -359,18 +372,21 @@ const eliminarUsuario = async (req, resp = response) => {
 
 const relacionarEstudianteTutores = async (req, resp = response) => {
   const { id_usuario_tutor, id_usuario_estudiante } = req.body;
-
+  console.log({ id_usuario_tutor });
   try {
-    if (id_usuario_estudiante) {
-      let usuario = await EstuTutor.findOne({
-        where: { id_usuario_estudiante: id_usuario_estudiante },
+    let existeEstudiante = await EstuTutor.findOne({
+      where: {
+        [Op.and]: [
+          { id_usuario_estudiante: id_usuario_estudiante },
+          { estatus: 1 },
+        ],
+      },
+    });
+    if (existeEstudiante) {
+      return resp.status(400).json({
+        ok: false,
+        msg: "Este estudiante ya tiene un tutor",
       });
-      if (usuario) {
-        return resp.status(400).json({
-          ok: false,
-          msg: "Este estudiante ya tiene un tutor",
-        });
-      }
     }
 
     const estudiante = await Usuario.findOne({

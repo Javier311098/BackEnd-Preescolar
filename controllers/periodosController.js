@@ -30,29 +30,18 @@ const crearPeriodo = async (req, resp = response) => {
 };
 
 const obtenerPeriodos = async (req, res = response) => {
-  let periodos = await Periodo.findAll();
+  const { roleId } = req.params;
+  let periodos;
+  if (parseInt(roleId) !== 1) {
+    periodos = await Periodo.findAll({ where: { estatus: 1 } });
+  } else {
+    periodos = await Periodo.findAll();
+  }
+
   res.json({
     ok: true,
     periodos,
   });
-};
-
-const obtenerPeriodoPorNombre = async (req, resp = response) => {
-  const { nombre } = req.params;
-  try {
-    const periodoEncontrado = await Periodo.findOne({
-      where: { [Op.and]: [{ nombre_periodo: nombre }, { estatus: 1 }] },
-    });
-    if (!periodoEncontrado) {
-      return resp
-        .status(404)
-        .json({ ok: false, msg: "El periodo no se encontro con ese nombre" });
-    }
-    resp.json({ ok: true, periodo: periodoEncontrado });
-  } catch (error) {
-    console.log(error);
-    resp.status(500).json({ ok: false, msg: "Hable con el administrador" });
-  }
 };
 
 const actualizarPeriodo = async (req, resp = response) => {
@@ -63,12 +52,7 @@ const actualizarPeriodo = async (req, resp = response) => {
     if (!periodo) {
       return resp.status(404).json({ ok: false, msg: "El periodo no existe" });
     }
-    if (periodo.estatus === 0) {
-      return resp.status(404).json({
-        ok: false,
-        msg: "El periodo no se encontro",
-      });
-    }
+
     const nuevoPeriodo = { ...req.body };
 
     const periodoActualizada = await Periodo.update(nuevoPeriodo, {
@@ -150,7 +134,6 @@ const eliminarPeriodo = async (req, resp = response) => {
 module.exports = {
   crearPeriodo,
   obtenerPeriodos,
-  obtenerPeriodoPorNombre,
   actualizarPeriodo,
   darDeBajaPeriodo,
   eliminarPeriodo,

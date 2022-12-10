@@ -5,7 +5,6 @@ const { validarCampos } = require("../middlewares/validar-campos");
 const {
   crearClase,
   obtenerClases,
-  obtenerClasePorMateria,
   actualizarClase,
   darDeBajaClase,
   eliminarClase,
@@ -27,9 +26,8 @@ const validarClase = [
 ];
 
 router.post("/", validarClase, crearClase);
-router.get("/", obtenerClases);
-router.get("/:id", obtenerClasePorMateria);
-router.get("/grado/:id", obtenerClasePorGrado);
+router.get("/:roleId", obtenerClases);
+router.get("/grado/:id/:roleId", obtenerClasePorGrado);
 router.put("/:id", validarClase, actualizarClase);
 router.put("/baja/:id", darDeBajaClase);
 router.delete("/:id", eliminarClase);
